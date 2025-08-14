@@ -1,6 +1,7 @@
 #ifndef TASK_H
 #define TASK_H
 
+#include <cstdint>
 #include <string> // строки
 #include <wx/datetime.h> // работа со временнем
 
@@ -14,6 +15,7 @@ public:
     const std::string& getDescription() const;
     const wxDateTime &getDateNow() const;
     const wxDateTime &getDateFinish() const;
+    const std::uint8_t getId() const;
 
     // сеттеры
     void setTitle(const std::string& title);
@@ -24,6 +26,8 @@ public:
     wxTimeSpan TimeRemaining() const;
 
 private:
+    std::uint8_t id;
+    static std::uint8_t nId;
     std::string title{};
     std::string description{};
     bool completed{};

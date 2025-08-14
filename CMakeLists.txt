@@ -13,7 +13,18 @@ project(toDoList) # название проект, также есть опци�
 set(CMAKE_CXX_STANDARD 20) # (свои додумки) - какой стандарт CXX будет использоваться в проекте
 set(wxWidgets_ROOT_DIR "C:/libC++/wxwidgets")
 set(wxWidgets_LIB_DIR "C:/libC++/wxwidgets/lib/gcc1510_x64_dll")
-set(json_c)
+set(json_c "C:/libC++/")
+
+include(FetchContent)
+
+FetchContent_Declare(
+        nlohmann_json
+        GIT_REPOSITORY https://github.com/nlohmann/json.git
+        GIT_TAG v3.11.3 # или последняя версия
+)
+
+FetchContent_MakeAvailable(nlohmann_json)
+
 
 find_package(wxWidgets REQUIRED COMPONENTS net core base)
 include(${wxWidgets_USE_FILE})
@@ -33,7 +44,8 @@ add_executable(toDoList ${project_GLOB}
         src/view/TaskDialog.h
         src/controller/TaskController.cpp
         src/controller/TaskController.h) # это команда говорит cmake создать исполняемый файл с
-target_link_libraries(toDoList ${wxWidgets_LIBRARIES})
+#target_link_libraries(toDoList ${wxWidgets_LIBRARIES})
+target_link_libraries(toDoList PRIVATE ${wxWidgets_LIBRARIES} nlohmann_json::nlohmann_json)
 target_include_directories(toDoList PRIVATE ${wxWidgets_INCLUDE_DIRS})
 # исходным кодом(это будет main.cpp)
 # параметры (targetName source1 [source2 ...])
