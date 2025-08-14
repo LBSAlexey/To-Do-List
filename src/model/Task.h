@@ -15,7 +15,7 @@ public:
     const std::string& getDescription() const;
     const wxDateTime &getDateNow() const;
     const wxDateTime &getDateFinish() const;
-    const std::uint8_t getId() const;
+    const int getId() const;
 
     // сеттеры
     void setTitle(const std::string& title);
@@ -26,8 +26,8 @@ public:
     wxTimeSpan TimeRemaining() const;
 
 private:
-    std::uint8_t id;
-    static std::uint8_t nId;
+    int id;
+    static int nId;
     std::string title{};
     std::string description{};
     bool completed{};

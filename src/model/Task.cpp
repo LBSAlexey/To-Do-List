@@ -4,7 +4,7 @@
 
 #include "Task.h"
 
-uint8_t Task::nId = 0;
+int Task::nId = 0;
 
 Task::Task(const std::string& name, const std::string& description, const wxDateTime& dateFinish, bool completed) {
     this->title = name;
@@ -33,7 +33,7 @@ const std::string& Task::getDescription() const{
     return this->description;
 }
 
-const std::uint8_t Task::getId() const {
+const int Task::getId() const {
     return this->id;
 }
 // сеттеры
