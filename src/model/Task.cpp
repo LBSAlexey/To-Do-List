@@ -52,7 +52,7 @@ bool Task::setDateFinish(const wxDateTime &dateFinish) {
     return true;
 }
 
-void Task::setComplete(bool completed) {
+void Task::setComplete(const bool completed) {
     this->completed = completed;
 }
 
@@ -66,19 +66,9 @@ void Task::setDescription(const std::string &description) {
 
 // проверка на просорчку задания
 bool Task::IsOverdue() const {
-    try {
-        return !completed && (finish.IsEarlierThan(wxDateTime::Now()) || finish.IsEqualTo(wxDateTime::Now()));
-    } catch (const std::exception& e) {
-        std::cout << e.what() << '\n';
-    }
-
+    return !completed && (finish.IsEarlierThan(wxDateTime::Now()) || finish.IsEqualTo(wxDateTime::Now()));
 }
 
 wxTimeSpan Task::TimeRemaining() const {
-    try {
-        return finish.Subtract(wxDateTime::Now());
-    } catch (const std::exception& e) {
-        std::cout << e.what() << '\n';
-    }
-
+    return finish.Subtract(wxDateTime::Now());
 }

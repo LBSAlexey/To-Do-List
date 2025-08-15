@@ -18,7 +18,7 @@ TaskList::TaskList() {
 
 void TaskList::AddTask(const std::string &newTitle, const std::string &newDescription, const wxDateTime & newFinishDate, bool completed) {
     Task t(newTitle, newDescription, newFinishDate, completed);
-    tasks[t.getId()] = t; // добавляем хэш-таблицу по ключу id
+    tasks.try_emplace(t.getId(), std::move(t)); // добавляем хэш-таблицу по ключу id
 }
 
 bool TaskList::removeTask(int id) {
@@ -51,17 +51,15 @@ Task *TaskList::getTask(int id)  {
 }
 
 bool TaskList::loadFromJson(const std::string& path) {
-    std::fstream file(path);
-    if (!file.is_open() || !file.good()) {
-        return false;
-    }
+    std::ifstream file(path);
+    if (!file) return false;
+
     file >> jArray;
     for (const auto& item : jArray) {
         std::string title = item["title"];
         std::string description = item["description"];
         bool completed = item["completed"];
-        wxDateTime startDate;
-        wxDateTime finishDate;
+        wxDateTime startDate, finishDate;
         startDate.ParseISOCombined(item["startDate"].get<std::string>());
         finishDate.ParseISOCombined(item["finishDate"].get<std::string>());
         Task t(title, description, finishDate, completed);
@@ -71,10 +69,9 @@ bool TaskList::loadFromJson(const std::string& path) {
 }
 
 bool TaskList::saveToJson(const std::string& path) {
-    std::fstream file(path);
-    if (!file.is_open() || !file.good()) {
-        return false;
-    }
+    std::ofstream file(path, std::ios::trunc);
+    if (!file) return false;
+
     nlohmann::json newJArray = nlohmann::json::array();
     for (const auto& [id, task] : tasks) {
         newJArray.push_back({
@@ -89,3 +86,5 @@ bool TaskList::saveToJson(const std::string& path) {
     file << newJArray.dump(4);
     return true;
 }
+
+TaskList::~TaskList() = default;
