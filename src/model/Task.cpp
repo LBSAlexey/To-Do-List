@@ -35,6 +35,10 @@ const std::string& Task::getDescription() const{
     return this->description;
 }
 
+const bool Task::getCompleted() const {
+    return this->completed;
+}
+
 const int Task::getId() const {
     return this->id;
 }
