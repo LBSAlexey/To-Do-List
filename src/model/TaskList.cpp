@@ -7,14 +7,13 @@
 #include <iostream>
 
 TaskList::TaskList() {
- if (jArray.empty()) {
-     try {
-         loadFromJson("tasks.json");
-     } catch (std::exception &e) {
-         std::cout << e.what() << '\n';
-     }
-
- }
+    if (jArray.empty()) {
+         try {
+             loadFromJson("tasks.json");
+         } catch (std::exception &e) {
+             std::cout << e.what() << '\n';
+         }
+    }
 }
 
 void TaskList::AddTask(const std::string &newTitle, const std::string &newDescription, const wxDateTime & newFinishDate, bool completed) {
@@ -25,12 +24,13 @@ void TaskList::AddTask(const std::string &newTitle, const std::string &newDescri
 bool TaskList::removeTask(int id) {
     auto key = tasks.find(id);
     if (key != tasks.end()) {
-        tasks.erase(id);
+        tasks.erase(key->first);
         return true;
     }
     return false;
 }
-bool TaskList::editTask(int id, const std::string &newTitle, const std::string newDescription, const wxDateTime &newFinisDate, bool completed) {
+
+bool TaskList::editTask(int id, const std::string &newTitle, const std::string& newDescription, const wxDateTime &newFinisDate, bool completed) {
     auto key = tasks.find(id);
     if (key != tasks.end()) {
         key->second.setTitle(newTitle);
@@ -76,14 +76,16 @@ bool TaskList::saveToJson(const std::string& path) {
         return false;
     }
     nlohmann::json newJArray = nlohmann::json::array();
-    for (int i = 0; i < tasks.size(); i++) {
+    for (const auto& [id, task] : tasks) {
         newJArray.push_back({
-        {"title", tasks[i].getTitle()},
-        {"description", tasks[i].getDescription()},
-        {"completed", tasks[i].getComplete},
-        {"finishDate", tasks[i].getDateFinish().FormatISOCombined(' ')},
+            {"id", task.getId()},
+            {"title", task.getTitle()},
+            {"description", task.getDescription()},
+            {"completed", task.getCompleted()},
+            {"startDate", task.getDateNow().FormatISOCombined(' ')},
+            {"finishDate", task.getDateFinish().FormatISOCombined(' ')}
         });
-
     }
+    file << newJArray.dump(4);
     return true;
 }

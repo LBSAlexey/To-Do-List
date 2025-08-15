@@ -20,10 +20,12 @@ public:
 
     void AddTask(const std::string& title, const std::string& description, const wxDateTime& dueDate, bool completed = false);
     bool removeTask(int id);
-    bool editTask(int id, const std::string& newTitle, const std::string newDescription ,const wxDateTime& newFinisDate, bool completed = false);
+    bool editTask(int id, const std::string& newTitle, const std::string& newDescription ,const wxDateTime& newFinisDate, bool completed = false);
     Task* getTask(int id) ;
     bool loadFromJson(const std::string& path);
     bool saveToJson(const std::string& path);
+    const std::unordered_map<int, Task>& getTasks() const { return tasks; }
+
 
 private:
     std::unordered_map<int, Task> tasks;
