@@ -48,6 +48,10 @@ bool Task::setDateFinish(const wxDateTime &dateFinish) {
     return true;
 }
 
+void Task::setComplete(bool completed) {
+    this->completed = completed;
+}
+
 void Task::setTitle(const std::string &title) {
     this->title = title;
 }

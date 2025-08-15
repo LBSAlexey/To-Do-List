@@ -13,6 +13,7 @@ public:
     // геттеры
     const std::string& getTitle() const;
     const std::string& getDescription() const;
+    const bool getCompleted() const;
     const wxDateTime &getDateNow() const;
     const wxDateTime &getDateFinish() const;
     const int getId() const;
@@ -21,7 +22,8 @@ public:
     void setTitle(const std::string& title);
     void setDescription(const std::string& description);
     bool setDateFinish(const wxDateTime &dateFinish);
-
+    void setComplete(bool completed);
+    /*----------------------------------------------*/
     bool IsOverdue() const;
     wxTimeSpan TimeRemaining() const;
 
