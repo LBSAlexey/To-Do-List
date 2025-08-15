@@ -87,4 +87,8 @@ bool TaskList::saveToJson(const std::string& path) {
     return true;
 }
 
+const std::unordered_map<int, Task> & TaskList::getTasks() const {
+    return tasks;
+}
+
 TaskList::~TaskList() = default;

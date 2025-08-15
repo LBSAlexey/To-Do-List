@@ -24,7 +24,7 @@ public:
     Task* getTask(int id) ;
     bool loadFromJson(const std::string& path);
     bool saveToJson(const std::string& path);
-    const std::unordered_map<int, Task>& getTasks() const { return tasks; }
+    const std::unordered_map<int, Task>& getTasks() const;
 
 
 private:
