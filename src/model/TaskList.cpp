@@ -9,5 +9,9 @@ TaskList::TaskList() {
 }
 
 void TaskList::AddTask(const std::string &newTitle, const std::string &newDescription, const wxDateTime & newFinishDate, bool completed) {
-    Task task(newTitle, newDescription, newFinishDate, completed);
+    Task t(newTitle, newDescription, newFinishDate, completed);
+    tasks[t.getId()] = t; // добавляем хэш-таблицу по ключу id
+}
+
+bool TaskList::removeTask(int id) {
 }

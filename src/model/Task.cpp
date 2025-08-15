@@ -4,6 +4,8 @@
 
 #include "Task.h"
 
+#include <iostream>
+
 int Task::nId = 0;
 
 Task::Task(const std::string& name, const std::string& description, const wxDateTime& dateFinish, bool completed) {
@@ -54,11 +56,21 @@ void Task::setDescription(const std::string &description) {
     this->description = description;
 }
 
-//
+// проверка на просорчку задания
 bool Task::IsOverdue() const {
-    return !completed && (finish.IsEarlierThan(wxDateTime::Now()) || finish.IsEqualTo(wxDateTime::Now()));
+    try {
+        return !completed && (finish.IsEarlierThan(wxDateTime::Now()) || finish.IsEqualTo(wxDateTime::Now()));
+    } catch (const std::exception& e) {
+        std::cout << e.what() << '\n';
+    }
+
 }
 
 wxTimeSpan Task::TimeRemaining() const {
-    return finish.Subtract(wxDateTime::Now());
+    try {
+        return finish.Subtract(wxDateTime::Now());
+    } catch (const std::exception& e) {
+        std::cout << e.what() << '\n';
+    }
+
 }
