@@ -22,6 +22,7 @@ public:
     void setTitle(const std::string& title);
     void setDescription(const std::string& description);
     bool setDateFinish(const wxDateTime &dateFinish);
+    bool setDateNow(const wxDateTime &dateStart);
     void setComplete(bool completed);
     /*----------------------------------------------*/
     bool IsOverdue() const;

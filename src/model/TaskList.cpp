@@ -62,6 +62,7 @@ bool TaskList::loadFromJson(const std::string& path) {
         startDate.ParseISOCombined(item["startDate"].get<std::string>());
         finishDate.ParseISOCombined(item["finishDate"].get<std::string>());
         Task t(title, description, finishDate, completed);
+        t.setDateNow(startDate);
         tasks.emplace(t.getId(), t);
     }
     return true;
@@ -69,7 +70,7 @@ bool TaskList::loadFromJson(const std::string& path) {
 
 bool TaskList::saveToJson(const std::string& path) {
     std::ofstream file(path, std::ios::trunc);
-    if (!file) return false;
+    if (!file) { std::cerr << "❌ Ошибка открытия файла на запись: " << path << "\n"; return false;}
 
     nlohmann::json newJArray = nlohmann::json::array();
     for (const auto& [id, task] : tasks) {

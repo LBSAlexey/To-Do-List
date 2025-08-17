@@ -52,6 +52,10 @@ bool Task::setDateFinish(const wxDateTime &dateFinish) {
     return true;
 }
 
+bool Task::setDateNow(const wxDateTime &dateStart) {
+    this->start = dateStart;
+}
+
 void Task::setComplete(const bool completed) {
     this->completed = completed;
 }

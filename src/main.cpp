@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
     TaskController controller(list);
 
     // 1. Добавление корректной задачи
-    wxDateTime due = wxDateTime::Now() + wxDateSpan::Days(1);
+    wxDateTime due = wxDateTime::Now() + wxDateSpan::Days(2);
     try {
         controller.addTask("Протестировать контроллер", "Создание, редактирование, удаление", due, false);
         // assert(list.getTasks().size() == 1);
@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
 
     // 2. Попытка добавить задачу с пустым заголовком
     try {
-        controller.addTask("", "описание", due, false);
+        controller.addTask("", "описание",  due, false);
         std::cerr << "❌ addTask (пустой заголовок) не выбросил исключение\n";
     } catch (const std::invalid_argument& e) {
         std::cout << "✅ addTask (пустой заголовок) выбросил: " << e.what() << "\n";
@@ -52,6 +52,7 @@ int main(int argc, char *argv[]) {
     std::cout << "✅ removeTask работает\n";
 
     // 6. Сохранение и загрузка
+    std::cout << "Размер taskList перед сохранением: " << list.getTasks().size() << "\n";
     controller.addTask("Задача для сохранения", "Будет сохранена", due, false);
     controller.saveTaskToFile("test_tasks.json");
 
