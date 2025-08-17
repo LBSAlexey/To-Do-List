@@ -1,9 +1,13 @@
 #include <iostream>
-#include <cassert>
-#include "model/TaskList.h"
+#include "model/Task.h"
 #include "controller/TaskController.h"
 
-int main() {
+#include <locale>
+#include <windows.h>
+
+int main(int argc, char *argv[]) {
+    SetConsoleOutputCP(CP_UTF8);
+    std::locale::global(std::locale(""));
     TaskList list;
     TaskController controller(list);
 
