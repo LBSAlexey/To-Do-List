@@ -4,14 +4,12 @@
 
 #include "TaskController.h"
 
-TaskController::TaskController(TaskList &t): taskList() {
-    this->taskList = t;
-}
+TaskController::TaskController(TaskList &t): taskList(t) {};
 
-void TaskController::addTask(int id, std::string &title, std::string &description, wxDateTime &finisDate, bool complete) const {
-    if ((title.empty() || description.empty()) && finisDate.IsEarlierThan(wxDateTime::Now()) && finisDate.IsEqualTo(wxDateTime::Now())) {
+void TaskController::addTask(const std::string &title,const std::string &description,const wxDateTime &finisDate, bool complete) const {
+    if ((title.empty() || description.empty()) && (finisDate.IsEarlierThan(wxDateTime::Now()) || finisDate.IsEqualTo(wxDateTime::Now()))) {
         throw std::invalid_argument("Название или описание не могут быть пустыми. Дата выполнения задачи не может быть задано ранее или в точь-точь");
-    } else if (finisDate.IsEarlierThan(wxDateTime::Now()) && finisDate.IsEqualTo(wxDateTime::Now())) {
+    } else if (finisDate.IsEarlierThan(wxDateTime::Now()) || finisDate.IsEqualTo(wxDateTime::Now())) {
         throw std::invalid_argument("Дата выполнения задачи не может быть задано ранее или в точь-точь");
     } else if (title.empty() || description.empty()) {
         throw std::invalid_argument("Название или описание не могут быть пустыми");
@@ -19,12 +17,13 @@ void TaskController::addTask(int id, std::string &title, std::string &descriptio
     taskList.addTask(title, description, finisDate, complete);
 }
 
-void TaskController::removeTask(int id) const{
+bool TaskController::removeTask(int id) const{
     if (id < 0) { throw std::invalid_argument("Id не может быть отрицательным"); }
     taskList.removeTask(id);
+    return true;
 }
 
-void TaskController::editTask(int id, std::string &title, std::string &description, wxDateTime &finisDate, bool complete) const {
+void TaskController::editTask(int id, const std::string &title, const std::string &description, const wxDateTime &finisDate,  bool complete) const {
     if ((title.empty() || description.empty())
         && finisDate.IsEarlierThan(wxDateTime::Now())
         && finisDate.IsEqualTo(wxDateTime::Now())) {
@@ -39,24 +38,30 @@ void TaskController::editTask(int id, std::string &title, std::string &descripti
     taskList.editTask(id, title,description, finisDate, complete);
 }
 
-void TaskController::getTask(int id) const {
+Task* TaskController::getTask(int id) const {
     if (id < 0) { throw std::invalid_argument("Id не может быть отрицательным"); }
-    taskList.getTask(id);
+    return this->taskList.getTask(id);
 }
 
-void TaskController::loadTaskFromFile(std::string &filePath) const {
+bool TaskController::loadTaskFromFile(const std::string &filePath) const {
     if (filePath.empty()) {
         throw std::invalid_argument("путь не может быть пустым");
     }
-    try {taskList.loadFromJson(filePath);}
+    try {
+        taskList.loadFromJson(filePath);
+        return true;
+    }
     catch (std::exception &e) {throw std::invalid_argument(e.what());}
 }
 
-void TaskController::saveTaskToFile(std::string &filePath) const {
+bool TaskController::saveTaskToFile(const std::string &filePath) const {
     if (filePath.empty()) {
         throw std::invalid_argument("путь не может быть пустым");
     }
-    try {taskList.saveToJson(filePath);}
+    try {
+        taskList.saveToJson(filePath);
+        return true;
+    }
     catch (std::exception &e) {throw std::invalid_argument(e.what());}
 }
 

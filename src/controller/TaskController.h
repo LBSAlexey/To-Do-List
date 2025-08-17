@@ -16,18 +16,16 @@ public:
     TaskController(TaskList& t);
     ~TaskController();
 
-    void addTask(int id, std::string& title, std::string& description, wxDateTime& finisDate, bool complete) const;
-    void removeTask(int id) const;
-    void editTask(int id, std::string& title, std::string& description, wxDateTime& finisDate, bool complete) const;
-    void getTask(int id) const;
-    void loadTaskFromFile(std::string& filePath) const;
-    void saveTaskToFile(std::string& filePath) const;
+    void addTask(const std::string& title,const std::string& description,const wxDateTime& finisDate, bool complete) const;
+    bool removeTask(int id) const;
+    void editTask(int id, const std::string &title, const std::string &description, const wxDateTime &finisDate, bool complete) const;
+    Task* getTask(int id) const;
+    bool loadTaskFromFile(const std::string& filePath) const;
+    bool saveTaskToFile(const std::string& filePath) const;
 private:
     TaskList& taskList;
 
 
 };
-
-
 
 #endif //TASKCONTROLLER_H
