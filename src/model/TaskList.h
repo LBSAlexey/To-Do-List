@@ -18,7 +18,7 @@ public:
     TaskList();
     ~TaskList();
 
-    void AddTask(const std::string& title, const std::string& description, const wxDateTime& dueDate, bool completed = false);
+    void addTask(const std::string& title, const std::string& description, const wxDateTime& dueDate, bool completed = false);
     bool removeTask(int id);
     bool editTask(int id, const std::string& newTitle, const std::string& newDescription ,const wxDateTime& newFinisDate, bool completed = false);
     Task* getTask(int id) ;

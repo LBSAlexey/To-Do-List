@@ -3,7 +3,6 @@
 //
 
 #include "TaskList.h"
-
 #include <iostream>
 
 TaskList::TaskList() {
@@ -16,7 +15,7 @@ TaskList::TaskList() {
     }
 }
 
-void TaskList::AddTask(const std::string &newTitle, const std::string &newDescription, const wxDateTime & newFinishDate, bool completed) {
+void TaskList::addTask(const std::string &newTitle, const std::string &newDescription, const wxDateTime & newFinishDate, bool completed) {
     Task t(newTitle, newDescription, newFinishDate, completed);
     tasks.try_emplace(t.getId(), std::move(t)); // добавляем хэш-таблицу по ключу id
 }
