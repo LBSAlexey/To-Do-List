@@ -70,7 +70,7 @@ bool TaskList::loadFromJson(const std::string& path) {
 
 bool TaskList::saveToJson(const std::string& path) {
     std::ofstream file(path, std::ios::trunc);
-    if (!file) { std::cerr << "❌ Ошибка открытия файла на запись: " << path << "\n"; return false;}
+    if (!file)  return false;
 
     nlohmann::json newJArray = nlohmann::json::array();
     for (const auto& [id, task] : tasks) {
