@@ -7,7 +7,7 @@
 #include <iostream>
 
 int Task::nId = 0;
-
+// конструктор который создаёт задачу
 Task::Task(const std::string& name, const std::string& description, const wxDateTime& dateFinish, bool completed) {
     this->title = name;
     this->description = description;
@@ -72,7 +72,7 @@ void Task::setDescription(const std::string &description) {
 bool Task::IsOverdue() const {
     return !completed && (finish.IsEarlierThan(wxDateTime::Now()) || finish.IsEqualTo(wxDateTime::Now()));
 }
-
+// сколько осталось до выполнения задачи
 wxTimeSpan Task::TimeRemaining() const {
     return finish.Subtract(wxDateTime::Now());
 }

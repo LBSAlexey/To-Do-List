@@ -8,7 +8,8 @@
 #include "../model/TaskList.h"   // модель
 #include <string>       // работа со строками
 #include <wx/datetime.h>// работа с датами
-#include <vector>       // если нужно будет отдавать списки задач
+#include <unordered_map>
+
 
 
 class TaskController {
@@ -22,6 +23,7 @@ public:
     Task* getTask(int id) const;
     bool loadTaskFromFile(const std::string& filePath) const;
     bool saveTaskToFile(const std::string& filePath) const;
+    std::unordered_map<int,Task> getAllTasks() const;
 private:
     TaskList& taskList;
 

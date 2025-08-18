@@ -65,6 +65,11 @@ bool TaskController::saveTaskToFile(const std::string &filePath) const {
     catch (std::exception &e) {throw std::invalid_argument(e.what());}
 }
 
+std::unordered_map<int, Task> TaskController::getAllTasks() const {
+    return !taskList.getTasks().empty() ?  taskList.getTasks() : throw std::invalid_argument("пустой объект");
+
+}
+
 TaskController::~TaskController() = default;
 
 

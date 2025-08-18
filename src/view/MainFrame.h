@@ -5,8 +5,10 @@
 #define MAINFRAME_H
 
 #include <wx/wx.h>
+#include "../controller/TaskController.h"
 #include "TaskPanel.h"
-#include "../model/TaskList.h"
+#include "TaskDialog.h"
+
 
 class MainFrame : public wxFrame
 {
@@ -15,27 +17,19 @@ public:
 
 private:
     // === Модель ===
-    TaskList* m_taskList; // указатель на список задач (данные)
+    TaskList taskList;
+    TaskController controller;
+    TaskPanel* taskPanel = nullptr;
 
-    // === View ===
-    TaskPanel* m_taskPanel; // панель со списком задач
-
-    // === Методы инициализации ===
-    void InitMenuBar();
-    void InitToolBar();
-    void InitStatusBar();
-    void InitTaskPanel();
-
-    // === Обработчики событий ===
+    // Методы-обработчики событий
     void OnAddTask(wxCommandEvent& event);
     void OnEditTask(wxCommandEvent& event);
-    void OnDeleteTask(wxCommandEvent& event);
-    void OnSaveTasks(wxCommandEvent& event);
-    void OnLoadTasks(wxCommandEvent& event);
-    void OnExit(wxCommandEvent& event);
-    void OnAbout(wxCommandEvent& event);
+    void OnRemoveTask(wxCommandEvent& event);
 
-    wxDECLARE_EVENT_TABLE(); // если используешь старый макросный способ
+    // Метод обновления UI
+    void RefreshTaskPanel();
+
+    wxDECLARE_EVENT_TABLE(); // макрос для регистрации событий
 };
 
 

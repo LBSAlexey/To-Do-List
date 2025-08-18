@@ -6,20 +6,14 @@
 #include <iostream>
 
 TaskList::TaskList() {
-    if (jArray.empty()) {
-         try {
-             loadFromJson("tasks.json");
-         } catch (std::exception &e) {
-             std::cout << e.what() << '\n';
-         }
-    }
-}
 
+}
+// добавляем задачу в хэш-таблицу
 void TaskList::addTask(const std::string &newTitle, const std::string &newDescription, const wxDateTime & newFinishDate, bool completed) {
     Task t(newTitle, newDescription, newFinishDate, completed);
     tasks.try_emplace(t.getId(), std::move(t)); // добавляем хэш-таблицу по ключу id
 }
-
+// удаляет задачу из таблицы по id
 bool TaskList::removeTask(int id) {
     auto key = tasks.find(id);
     if (key != tasks.end()) {
@@ -28,7 +22,7 @@ bool TaskList::removeTask(int id) {
     }
     return false;
 }
-
+// изменяет задачу по id
 bool TaskList::editTask(int id, const std::string &newTitle, const std::string& newDescription, const wxDateTime &newFinisDate, bool completed) {
     auto key = tasks.find(id);
     if (key != tasks.end()) {
@@ -40,7 +34,7 @@ bool TaskList::editTask(int id, const std::string &newTitle, const std::string& 
     }
     return false;
 }
-
+// возвращает задачу по id
 Task *TaskList::getTask(int id)  {
     auto key = tasks.find(id);
     if (key != tasks.end()) {
@@ -48,7 +42,7 @@ Task *TaskList::getTask(int id)  {
     }
     return nullptr;
 }
-
+// загружает задачи из json
 bool TaskList::loadFromJson(const std::string& path) {
     std::ifstream file(path);
     if (!file) return false;
@@ -67,7 +61,7 @@ bool TaskList::loadFromJson(const std::string& path) {
     }
     return true;
 }
-
+// сохраняет задачи в json
 bool TaskList::saveToJson(const std::string& path) {
     std::ofstream file(path, std::ios::trunc);
     if (!file)  return false;
@@ -86,7 +80,7 @@ bool TaskList::saveToJson(const std::string& path) {
     file << newJArray.dump(4);
     return true;
 }
-
+// возвращает хэш-таблицу со всеми задачами
 const std::unordered_map<int, Task> & TaskList::getTasks() const {
     return tasks;
 }
