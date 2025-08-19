@@ -49,14 +49,14 @@ bool TaskList::loadFromJson(const std::string& path) {
 
     file >> jArray;
     for (const auto& item : jArray) {
+        int id = item["id"].get<int>();
         std::string title = item["title"];
         std::string description = item["description"];
         bool completed = item["completed"];
         wxDateTime startDate, finishDate;
         startDate.ParseISOCombined(item["startDate"].get<std::string>());
         finishDate.ParseISOCombined(item["finishDate"].get<std::string>());
-        Task t(title, description, finishDate, completed);
-        t.setDateNow(startDate);
+        Task t(id,title, description, finishDate, startDate,completed);
         tasks.emplace(t.getId(), t);
     }
     return true;

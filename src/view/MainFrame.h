@@ -1,6 +1,3 @@
-//
-// Created by Лёха on 09.08.2025.
-//
 #ifndef MAINFRAME_H
 #define MAINFRAME_H
 
@@ -8,29 +5,32 @@
 #include "../controller/TaskController.h"
 #include "TaskPanel.h"
 #include "TaskDialog.h"
+#include <wx/filename.h>
+#include <wx/stdpaths.h>
 
-
-class MainFrame : public wxFrame
-{
+class MainFrame : public wxFrame {
 public:
     MainFrame(const wxString& title);
+    virtual ~MainFrame() = default;
+    void InitUI();
 
 private:
-    // === Модель ===
     TaskList taskList;
-    TaskController controller;
+    TaskController controller{taskList};
     TaskPanel* taskPanel = nullptr;
 
-    // Методы-обработчики событий
     void OnAddTask(wxCommandEvent& event);
     void OnEditTask(wxCommandEvent& event);
     void OnRemoveTask(wxCommandEvent& event);
-
-    // Метод обновления UI
     void RefreshTaskPanel();
+    void LoadTasksFromFile();
+    void SaveTasksToFile();
 
-    wxDECLARE_EVENT_TABLE(); // макрос для регистрации событий
+    enum {
+        ID_ADD = wxID_HIGHEST + 1,
+        ID_EDIT,
+        ID_REMOVE
+    };
 };
 
-
-#endif //MAINFRAME_H
+#endif

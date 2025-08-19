@@ -29,6 +29,7 @@ FetchContent_MakeAvailable(nlohmann_json)
 find_package(wxWidgets REQUIRED COMPONENTS net core base)
 include(${wxWidgets_USE_FILE})
 
+
 file(GLOB project_GLOB src/*)
 
 add_executable(toDoList ${project_GLOB}
@@ -47,6 +48,7 @@ add_executable(toDoList ${project_GLOB}
 #target_link_libraries(toDoList ${wxWidgets_LIBRARIES})
 target_link_libraries(toDoList PRIVATE ${wxWidgets_LIBRARIES} nlohmann_json::nlohmann_json)
 target_include_directories(toDoList PRIVATE ${wxWidgets_INCLUDE_DIRS})
+target_compile_definitions(toDoList PRIVATE UNICODE _UNICODE)
 # исходным кодом(это будет main.cpp)
 # параметры (targetName source1 [source2 ...])
 # targetName - название таргета, с этим название будет создан exe

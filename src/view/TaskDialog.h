@@ -15,6 +15,8 @@
 #include <wx/stattext.h>       // подписи к полям
 #include <wx/msgdlg.h>         // всплывающие окна (ошибки)
 #include <wx/datetime.h>       // работа с датой
+#include <wx/timer.h>
+
 #include "../model/Task.h"     // если хочешь передавать/редактировать задачу
 
 
@@ -32,6 +34,7 @@ private:
     wxTextCtrl* titleCtrl = nullptr;
     wxTextCtrl* descCtrl = nullptr;
     wxDatePickerCtrl* dateCtrl = nullptr;
+    wxTimer *timeCtrl = nullptr;
     wxCheckBox* completeCheck = nullptr;
 
     void InitUI(Task* task = nullptr); // если task != nullptr → редактирование
@@ -39,7 +42,7 @@ private:
     void OnOk(wxCommandEvent& event);
     void OnCancel(wxCommandEvent& event);
 
-    wxDECLARE_EVENT_TABLE();
+
 };
 
 

@@ -4,15 +4,25 @@
 
 #include "TaskPanel.h"
 
+#include <wx/msgdlg.h>
+
+TaskPanel::TaskPanel(wxWindow* parent, TaskController& controller)
+    : wxPanel(parent), controller(controller) {
+    InitUI();
+}
+
 void TaskPanel::InitUI() {
+
     listCtrl = new wxListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT);
+    listCtrl->SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Arial"));
+
     listCtrl->InsertColumn(0, "ID");
-    listCtrl->InsertColumn(1, "Задача");
-    listCtrl->InsertColumn(2, "Описание");
-    listCtrl->InsertColumn(3, "Дата");
-    listCtrl->InsertColumn(4, "Конечная дата");
-    listCtrl->InsertColumn(5, "Осталось дней");
-    listCtrl->InsertColumn(6, "Статус");
+    listCtrl->InsertColumn(1, "Task");
+    listCtrl->InsertColumn(2, "Description");
+    listCtrl->InsertColumn(3, "Date", wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE+ 200);
+    listCtrl->InsertColumn(4, "End date");
+    listCtrl->InsertColumn(5, "Days left");
+    listCtrl->InsertColumn(6, "Status");
 
     wxBoxSizer *tasksSizer = new wxBoxSizer(wxVERTICAL);
     tasksSizer->Add(listCtrl, 1, wxALL | wxEXPAND, 5);
@@ -22,6 +32,7 @@ void TaskPanel::InitUI() {
 
 void TaskPanel::Populate() {
     listCtrl->DeleteAllItems();
+
     for (const auto& [id, task] : controller.getAllTasks()) {
         int row = listCtrl->GetItemCount();
         row = listCtrl->InsertItem(row, wxString::Format("%d", id));
@@ -31,8 +42,9 @@ void TaskPanel::Populate() {
         listCtrl->SetItem(row, 3, task.getDateNow().FormatISOCombined(' '));
         listCtrl->SetItem(row, 4, task.getDateFinish().FormatISOCombined(' '));
         listCtrl->SetItem(row, 5, task.TimeRemaining().Format("Day: %D; Time: %H:%M:%S"));
-        listCtrl->SetItem(row, 6, task.getCompleted() ? "Выполнено" : "Не выполнено");
+        listCtrl->SetItem(row, 6, task.getCompleted() ? "Done" : "Not done");
     }
+
 }
 
 

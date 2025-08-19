@@ -17,6 +17,28 @@ Task::Task(const std::string& name, const std::string& description, const wxDate
     this->id = ++nId;
 }
 
+Task::Task(int id, const std::string& name, const std::string& description, const wxDateTime& dateFinish, const wxDateTime& dateStart, bool completed) {
+    this->id = id;
+    this->title = name;
+    this->description = description;
+    this->finish = dateFinish;
+    this->start = dateStart;
+    this->completed = completed;
+
+    // Обновляем статический счетчик ID
+    if (id >= nId) {
+        nId = id + 1;
+    }
+}
+
+void Task::setId(int id) {
+    this->id = id;
+    // Обновляем статический счетчик ID
+    if (id >= nId) {
+        nId = id + 1;
+    }
+}
+
 // геттеры
 const wxDateTime& Task::getDateFinish() const {
     return finish;

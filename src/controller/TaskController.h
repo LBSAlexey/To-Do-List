@@ -15,6 +15,7 @@
 class TaskController {
 public:
     TaskController(TaskList& t);
+
     ~TaskController();
 
     void addTask(const std::string& title,const std::string& description,const wxDateTime& finisDate, bool complete) const;

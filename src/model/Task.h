@@ -9,6 +9,7 @@
 class Task {
 public:
     Task(const std::string& name, const std::string& description, const wxDateTime& dateFinish, bool completed = false);
+    Task(int id, const std::string& name, const std::string& description, const wxDateTime& dateFinish, const wxDateTime& dateStart, bool completed = false);
 
     // геттеры
     const std::string& getTitle() const;
@@ -19,6 +20,7 @@ public:
     const int getId() const;
 
     // сеттеры
+    void setId(int id);
     void setTitle(const std::string& title);
     void setDescription(const std::string& description);
     bool setDateFinish(const wxDateTime &dateFinish);
