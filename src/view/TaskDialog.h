@@ -1,25 +1,17 @@
-//
-// Created by Лёха on 09.08.2025.
-//
-
 #ifndef TASKDIALOG_H
 #define TASKDIALOG_H
-
-#include <wx/dialog.h>         // базовый класс wxDialog
-#include <wx/textctrl.h>       // для title и description
-#include <wx/datectrl.h>       // базовый класс для wxDatePickerCtrl
-#include <wx/dateevt.h>        // события от даты
-#include <wx/checkbox.h>       // для галочки "выполнено"
-#include <wx/sizer.h>          // компоновка (BoxSizer / GridSizer)
-#include <wx/button.h>         // кнопки OK / Cancel
-#include <wx/stattext.h>       // подписи к полям
-#include <wx/msgdlg.h>         // всплывающие окна (ошибки)
-#include <wx/datetime.h>       // работа с датой
-#include <wx/timer.h>
-
-#include "../model/Task.h"     // если хочешь передавать/редактировать задачу
-
-
+#include <C:/Users/keklo/CLionProjects/toDoList/src/model/Task.h>
+#include <wx/dialog.h>
+#include <wx/textctrl.h>
+#include <wx/datectrl.h>
+#include <wx/dateevt.h>
+#include <wx/checkbox.h>
+#include <wx/sizer.h>
+#include <wx/button.h>
+#include <wx/stattext.h>
+#include <wx/msgdlg.h>
+#include <wx/datetime.h>
+#include <wx/spinctrl.h>  // Добавьте этот заголовок
 
 class TaskDialog : public wxDialog {
 public:
@@ -27,23 +19,21 @@ public:
 
     wxString GetTitleValue() const;
     wxString GetDescriptionValue() const;
-    wxDateTime GetDateValue() const;
+    wxDateTime GetDateTimeValue() const;
     bool GetCompletedValue() const;
 
 private:
     wxTextCtrl* titleCtrl = nullptr;
     wxTextCtrl* descCtrl = nullptr;
     wxDatePickerCtrl* dateCtrl = nullptr;
-    wxTimer *timeCtrl = nullptr;
+    wxSpinCtrl* hourCtrl = nullptr;    // Для часов
+    wxSpinCtrl* minuteCtrl = nullptr;  // Для минут
     wxCheckBox* completeCheck = nullptr;
 
-    void InitUI(Task* task = nullptr); // если task != nullptr → редактирование
+    void InitUI(Task* task = nullptr);
 
     void OnOk(wxCommandEvent& event);
     void OnCancel(wxCommandEvent& event);
-
-
 };
 
-
-#endif //TASKDIALOG_H
+#endif

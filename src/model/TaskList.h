@@ -11,6 +11,8 @@
 #include <fstream>  // для сохранения/загрузки
 #include <sstream>  // для простого парсинга
 #include <nlohmann/json.hpp> // json library
+#include <wx/string.h>
+#include <wx/log.h>
 
 
 class TaskList {

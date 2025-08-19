@@ -8,7 +8,7 @@ MainFrame::MainFrame(const wxString& title)
     : wxFrame(nullptr, wxID_ANY, title), controller(taskList) {
     wxWindow::SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Arial Unicode MS"));
     InitUI();
-    LoadTasksFromFile();
+    LoadTasksFromFile(); // Загружаем задачи при запуске
 }
 
 void MainFrame::InitUI() {
@@ -44,13 +44,13 @@ void MainFrame::OnAddTask(wxCommandEvent& event) {
     if (dlg.ShowModal() == wxID_OK) {
         wxString title = dlg.GetTitleValue();
         wxString desc = dlg.GetDescriptionValue();
-        wxDateTime date = dlg.GetDateValue();
+        wxDateTime dateTime = dlg.GetDateTimeValue();
         bool complete = dlg.GetCompletedValue();
 
         try {
-            controller.addTask(title.ToStdString(), desc.ToStdString(), date, complete);
-            taskPanel->RefreshList(); // обновляем интерфейс
-            SaveTasksToFile();
+            controller.addTask(title.ToStdString(), desc.ToStdString(), dateTime, complete);
+            taskPanel->RefreshList();
+            SaveTasksToFile(); // Сохраняем после добавления
         } catch (const std::exception& e) {
             wxMessageBox(e.what(), "error", wxICON_ERROR);
         }
@@ -77,17 +77,16 @@ void MainFrame::OnEditTask(wxCommandEvent& event) {
                 id,
                 dlg.GetTitleValue().ToStdString(),
                 dlg.GetDescriptionValue().ToStdString(),
-                dlg.GetDateValue(),
+                dlg.GetDateTimeValue(),
                 dlg.GetCompletedValue()
             );
             taskPanel->RefreshList();
-            SaveTasksToFile();
+            SaveTasksToFile(); // Сохраняем после редактирования
         } catch (const std::exception& e) {
             wxMessageBox(e.what(), "error", wxICON_ERROR);
         }
     }
 }
-
 
 void MainFrame::OnRemoveTask(wxCommandEvent& event) {
     int id = taskPanel->GetSelectedTaskId();
@@ -101,7 +100,7 @@ void MainFrame::OnRemoveTask(wxCommandEvent& event) {
         try {
             controller.removeTask(id);
             taskPanel->RefreshList();
-            SaveTasksToFile();
+            SaveTasksToFile(); // Сохраняем после удаления
         } catch (const std::exception& e) {
             wxMessageBox(e.what(), "Error while deleting", wxICON_ERROR);
         }

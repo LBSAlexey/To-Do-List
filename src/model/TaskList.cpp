@@ -44,31 +44,39 @@ Task *TaskList::getTask(int id)  {
 }
 // загружает задачи из json
 bool TaskList::saveToJson(const std::string& path) {
-    std::ofstream file(path, std::ios::trunc);
+    std::ofstream file(path, std::ios::trunc | std::ios::binary);
     if (!file) return false;
 
     nlohmann::json newJArray = nlohmann::json::array();
     for (const auto& [id, task] : tasks) {
-        // Сохраняем даты в UTC для избежания проблем с часовыми поясами
-        wxDateTime startDate = task.getDateNow();
-        wxDateTime finishDate = task.getDateFinish();
+        // Для дат: форматируем и преобразуем в std::string
+        wxString startDateWxStr = task.getDateNow().IsValid() ?
+            task.getDateNow().FormatISOCombined(' ') :
+            wxDateTime::Now().FormatISOCombined(' ');
+        std::string startDateStr = std::string(startDateWxStr.ToUTF8());
 
-        // Преобразуем в UTC перед сохранением
-        if (startDate.IsValid()) startDate.MakeUTC();
-        if (finishDate.IsValid()) finishDate.MakeUTC();
+        wxString finishDateWxStr = task.getDateFinish().IsValid() ?
+            task.getDateFinish().FormatISOCombined(' ') :
+            wxDateTime::Now().FormatISOCombined(' ');
+        std::string finishDateStr = std::string(finishDateWxStr.ToUTF8());
 
-        std::string startDateStr = startDate.IsValid() ?
-            startDate.FormatISOCombined(' ').ToUTF8().data() :
-            wxDateTime::Now().MakeUTC().FormatISOCombined(' ').ToUTF8().data();
+        // Для title и description: преобразуем через wxString для обеспечения UTF-8
+        wxString titleWxStr = wxString::FromUTF8(task.getTitle());
+        if (!titleWxStr.IsValid()) {
+            titleWxStr = wxString::FromUTF8(task.getTitle(), wxConvUTF8, wxREPLACE_INVALID);
+        }
+        std::string titleStr = std::string(titleWxStr.ToUTF8());
 
-        std::string finishDateStr = finishDate.IsValid() ?
-            finishDate.FormatISOCombined(' ').ToUTF8().data() :
-            wxDateTime::Now().MakeUTC().FormatISOCombined(' ').ToUTF8().data();
+        wxString descriptionWxStr = wxString::FromUTF8(task.getDescription());
+        if (!descriptionWxStr.IsValid()) {
+            descriptionWxStr = wxString::FromUTF8(task.getDescription(), wxConvUTF8, wxREPLACE_INVALID);
+        }
+        std::string descriptionStr = std::string(descriptionWxStr.ToUTF8());
 
         newJArray.push_back({
             {"id", task.getId()},
-            {"title", task.getTitle()},
-            {"description", task.getDescription()},
+            {"title", titleStr},
+            {"description", descriptionStr},
             {"completed", task.getCompleted()},
             {"startDate", startDateStr},
             {"finishDate", finishDateStr}
@@ -85,7 +93,7 @@ bool TaskList::saveToJson(const std::string& path) {
 }
 
 bool TaskList::loadFromJson(const std::string& path) {
-    std::ifstream file(path);
+    std::ifstream file(path, std::ios::binary);
     if (!file) {
         wxLogMessage("File does not exist: %s", path);
         return false;
@@ -109,22 +117,22 @@ bool TaskList::loadFromJson(const std::string& path) {
             std::string description = item["description"];
             bool completed = item["completed"];
 
-            // Парсим даты и преобразуем из UTC в локальное время
+            // Парсим даты с временем
             wxDateTime startDate, finishDate;
             std::string startStr = item["startDate"];
             std::string finishStr = item["finishDate"];
 
-            if (startDate.ParseISOCombined(wxString::FromUTF8(startStr))) {
-                startDate.MakeFromUTC(); // Преобразуем из UTC в локальное время
-            } else {
+            // Преобразуем в wxString для корректной обработки UTF-8
+            wxString startWxStr = wxString::FromUTF8(startStr);
+            wxString finishWxStr = wxString::FromUTF8(finishStr);
+
+            if (!startDate.ParseISOCombined(startWxStr)) {
                 startDate = wxDateTime::Now();
             }
 
-            if (finishDate.ParseISOCombined(wxString::FromUTF8(finishStr))) {
-                finishDate.MakeFromUTC(); // Преобразуем из UTC в локальное время
-            } else {
+            if (!finishDate.ParseISOCombined(finishWxStr)) {
                 finishDate = wxDateTime::Now();
-                finishDate.Add(wxDateSpan(0, 0, 0, 1)); // Добавляем 1 день
+                finishDate.Add(wxDateSpan(0, 0, 0, 1));
             }
 
             Task task(id, title, description, finishDate, startDate, completed);

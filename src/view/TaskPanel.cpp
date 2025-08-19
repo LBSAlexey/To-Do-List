@@ -3,8 +3,8 @@
 //
 
 #include "TaskPanel.h"
-
 #include <wx/msgdlg.h>
+
 
 TaskPanel::TaskPanel(wxWindow* parent, TaskController& controller)
     : wxPanel(parent), controller(controller) {
@@ -35,7 +35,6 @@ void TaskPanel::Populate() {
 
     try {
         for (const auto& [id, task] : controller.getAllTasks()) {
-            // Пропускаем невалидные задачи
             if (!task.isValid()) {
                 continue;
             }
@@ -46,23 +45,29 @@ void TaskPanel::Populate() {
             listCtrl->SetItem(row, 1, task.getTitle());
             listCtrl->SetItem(row, 2, task.getDescription());
 
-            // Проверяем валидность дат перед форматированием
+            // Форматируем даты для отображения с временем
             wxString startDate = task.getDateNow().IsValid() ?
-                task.getDateNow().FormatISOCombined(' ') : "Invalid Date";
+                task.getDateNow().Format("%Y-%m-%d %H:%M") : "Invalid Date";
+
             wxString finishDate = task.getDateFinish().IsValid() ?
-                task.getDateFinish().FormatISOCombined(' ') : "Invalid Date";
+                task.getDateFinish().Format("%Y-%m-%d %H:%M") : "Invalid Date";
 
             listCtrl->SetItem(row, 3, startDate);
             listCtrl->SetItem(row, 4, finishDate);
 
-            // Форматируем оставшееся время с проверкой
+            // Рассчитываем оставшееся время
             wxString timeRemaining;
             if (task.getDateFinish().IsValid() && wxDateTime::Now().IsValid()) {
                 wxTimeSpan remaining = task.TimeRemaining();
-                if (remaining.IsPositive()) {
-                    timeRemaining = remaining.Format("Day: %D; Time: %H:%M:%S");
-                } else {
+
+                if (remaining.IsNegative()) {
                     timeRemaining = "Overdue";
+                } else {
+                    int days = remaining.GetDays();
+                    int hours = remaining.GetHours() % 24;
+                    int minutes = remaining.GetMinutes() % 60;
+
+                    timeRemaining = wxString::Format("%d days, %02d:%02d", days, hours, minutes);
                 }
             } else {
                 timeRemaining = "N/A";

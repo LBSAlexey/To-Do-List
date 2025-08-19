@@ -17,12 +17,16 @@ Task::Task(const std::string& name, const std::string& description, const wxDate
     this->id = ++nId;
 }
 
-Task::Task(int id, const std::string& name, const std::string& description, const wxDateTime& dateFinish, const wxDateTime& dateStart, bool completed) {
+Task::Task(int id, const std::string& name, const std::string& description,
+           const wxDateTime& dateFinish, const wxDateTime& dateStart, bool completed) {
     this->id = id;
     this->title = name;
     this->description = description;
-    this->finish = dateFinish.IsValid() ? dateFinish : wxDateTime::Now() + wxTimeSpan::Days(1);
-    this->start = dateStart;
+
+    // Убедимся, что даты валидны
+    this->finish = dateFinish.IsValid() ? dateFinish : wxDateTime::Now().Add(wxDateSpan(0, 0,0,1));
+    this->start = dateStart.IsValid() ? dateStart : wxDateTime::Now();
+
     this->completed = completed;
 
     // Обновляем статический счетчик ID
