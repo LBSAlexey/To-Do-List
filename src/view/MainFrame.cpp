@@ -135,7 +135,13 @@ void MainFrame::SaveTasksToFile() {
             SetStatusText("Error saving tasks to " + defaultFile);
         }
     } catch (const std::exception& e) {
-        wxMessageBox("Error saving tasks: " + wxString(e.what()),
-                    "Error", wxOK | wxICON_ERROR);
+        // Попробуем альтернативный путь, если Documents недоступен
+        wxString altFile = "tasks.json";
+        if (controller.saveTaskToFile(altFile.ToStdString())) {
+            SetStatusText("Tasks saved to " + altFile);
+        } else {
+            wxMessageBox("Error saving tasks: " + wxString(e.what()),
+                        "Error", wxOK | wxICON_ERROR);
+        }
     }
 }

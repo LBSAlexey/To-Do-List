@@ -45,51 +45,24 @@ Task* TaskController::getTask(int id) const {
 
 bool TaskController::loadTaskFromFile(const std::string& filePath) const {
     if (filePath.empty()) {
-        wxLogWarning("Empty file path");
         return false;
     }
-
-    // Проверяем существование файла
-    if (!wxFileExists(filePath)) {
-        wxLogMessage("File does not exist: %s", filePath);
-        return false;
-    }
-
-    // Проверяем, не пустой ли файл
-    wxFile file(filePath);
-    if (file.Length() == 0) {
-        wxLogMessage("File is empty: %s", filePath);
-        return false;
-    }
-    file.Close();
 
     try {
         return taskList.loadFromJson(filePath);
     } catch (const std::exception& e) {
-        wxLogError("Error loading tasks: %s", e.what());
         return false;
     }
 }
 
 bool TaskController::saveTaskToFile(const std::string& filePath) const {
     if (filePath.empty()) {
-        wxLogWarning("Empty file path");
         return false;
-    }
-
-    // Создаем директорию, если она не существует
-    wxFileName fn(filePath);
-    if (!fn.DirExists()) {
-        if (!fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL)) {
-            wxLogError("Cannot create directory: %s", fn.GetPath());
-            return false;
-        }
     }
 
     try {
         return taskList.saveToJson(filePath);
     } catch (const std::exception& e) {
-        wxLogError("Error saving tasks: %s", e.what());
         return false;
     }
 }

@@ -4,6 +4,7 @@
 
 #include "TaskPanel.h"
 #include <wx/msgdlg.h>
+#include <../src/model/Task.h>
 
 
 TaskPanel::TaskPanel(wxWindow* parent, TaskController& controller)

@@ -1,6 +1,6 @@
-#ifndef TASKDIALOG_H
-#define TASKDIALOG_H
-#include <C:/Users/keklo/CLionProjects/toDoList/src/model/Task.h>
+#ifndef TASKDIALOG_H_
+#define TASKDIALOG_H_
+#include <model/Task.h>
 #include <wx/dialog.h>
 #include <wx/textctrl.h>
 #include <wx/datectrl.h>

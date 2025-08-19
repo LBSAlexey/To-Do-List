@@ -44,42 +44,28 @@ Task *TaskList::getTask(int id)  {
 }
 // загружает задачи из json
 bool TaskList::saveToJson(const std::string& path) {
-    std::ofstream file(path, std::ios::trunc | std::ios::binary);
+    std::ofstream file(path, std::ios::trunc);
     if (!file) return false;
 
     nlohmann::json newJArray = nlohmann::json::array();
     for (const auto& [id, task] : tasks) {
-        // Для дат: форматируем и преобразуем в std::string
-        wxString startDateWxStr = task.getDateNow().IsValid() ?
-            task.getDateNow().FormatISOCombined(' ') :
-            wxDateTime::Now().FormatISOCombined(' ');
-        std::string startDateStr = std::string(startDateWxStr.ToUTF8());
+        // Сохраняем даты в ISO формате с 'T' между датой и временем
+        wxString startDateStr = task.getDateNow().IsValid() ?
+            task.getDateNow().Format("%Y-%m-%d %H:%M:%S") :
+            wxDateTime::Now().Format("%Y-%m-%d %H:%M:%S");
 
-        wxString finishDateWxStr = task.getDateFinish().IsValid() ?
-            task.getDateFinish().FormatISOCombined(' ') :
-            wxDateTime::Now().FormatISOCombined(' ');
-        std::string finishDateStr = std::string(finishDateWxStr.ToUTF8());
 
-        // Для title и description: преобразуем через wxString для обеспечения UTF-8
-        wxString titleWxStr = wxString::FromUTF8(task.getTitle());
-        if (!titleWxStr.IsValid()) {
-            titleWxStr = wxString::FromUTF8(task.getTitle(), wxConvUTF8, wxREPLACE_INVALID);
-        }
-        std::string titleStr = std::string(titleWxStr.ToUTF8());
-
-        wxString descriptionWxStr = wxString::FromUTF8(task.getDescription());
-        if (!descriptionWxStr.IsValid()) {
-            descriptionWxStr = wxString::FromUTF8(task.getDescription(), wxConvUTF8, wxREPLACE_INVALID);
-        }
-        std::string descriptionStr = std::string(descriptionWxStr.ToUTF8());
+        wxString finishDateStr = task.getDateFinish().IsValid() ?
+            task.getDateFinish().Format("%Y-%m-%d %H:%M:%S") :
+            wxDateTime::Now().Format("%Y-%m-%d %H:%M:%S");
 
         newJArray.push_back({
             {"id", task.getId()},
-            {"title", titleStr},
-            {"description", descriptionStr},
+            {"title", task.getTitle()},
+            {"description", task.getDescription()},
             {"completed", task.getCompleted()},
-            {"startDate", startDateStr},
-            {"finishDate", finishDateStr}
+            {"startDate", startDateStr.ToUTF8().data()},
+            {"finishDate", finishDateStr.ToUTF8().data()}
         });
     }
 
@@ -93,7 +79,7 @@ bool TaskList::saveToJson(const std::string& path) {
 }
 
 bool TaskList::loadFromJson(const std::string& path) {
-    std::ifstream file(path, std::ios::binary);
+    std::ifstream file(path);
     if (!file) {
         wxLogMessage("File does not exist: %s", path);
         return false;
@@ -102,7 +88,7 @@ bool TaskList::loadFromJson(const std::string& path) {
     file.seekg(0, std::ios::end);
     size_t size = file.tellg();
     if (size == 0) {
-        wxLogMessage("File is empty: %s", path);
+        // wxLogMessage("File is empty: %s", path);
         return false;
     }
     file.seekg(0, std::ios::beg);
@@ -122,15 +108,14 @@ bool TaskList::loadFromJson(const std::string& path) {
             std::string startStr = item["startDate"];
             std::string finishStr = item["finishDate"];
 
-            // Преобразуем в wxString для корректной обработки UTF-8
-            wxString startWxStr = wxString::FromUTF8(startStr);
-            wxString finishWxStr = wxString::FromUTF8(finishStr);
-
-            if (!startDate.ParseISOCombined(startWxStr)) {
+            // Парсим даты в ISO формате с 'T'
+            if (!startDate.ParseFormat(wxString(startStr), "%Y-%m-%d %H:%M:%S")) {
+                wxLogWarning("Failed to parse start date: %s", startStr);
                 startDate = wxDateTime::Now();
             }
 
-            if (!finishDate.ParseISOCombined(finishWxStr)) {
+            if (!finishDate.ParseFormat(wxString(finishStr), "%Y-%m-%d %H:%M:%S")) {
+                wxLogWarning("Failed to parse finish date: %s", finishStr);
                 finishDate = wxDateTime::Now();
                 finishDate.Add(wxDateSpan(0, 0, 0, 1));
             }
@@ -144,6 +129,7 @@ bool TaskList::loadFromJson(const std::string& path) {
         return false;
     }
 }
+
 // возвращает хэш-таблицу со всеми задачами
 const std::unordered_map<int, Task> & TaskList::getTasks() const {
     return tasks;
