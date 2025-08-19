@@ -52,3 +52,15 @@ target_include_directories(toDoList PRIVATE
 
 target_link_libraries(toDoList PRIVATE ${wxWidgets_LIBRARIES} nlohmann_json::nlohmann_json)
 target_compile_definitions(toDoList PRIVATE UNICODE _UNICODE)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    target_compile_options(toDoList PRIVATE -O3 -DNDEBUG)
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -s")
+endif()
+
+include(InstallRequiredSystemLibraries)
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
+set(CPACK_PACKAGE_VERSION_MAJOR "1")
+set(CPACK_PACKAGE_VERSION_MINOR "0")
+set(CPACK_PACKAGE_VERSION_PATCH "0")
+include(CPack)
