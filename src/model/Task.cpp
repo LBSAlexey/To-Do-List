@@ -11,7 +11,7 @@ int Task::nId = 0;
 Task::Task(const std::string& name, const std::string& description, const wxDateTime& dateFinish, bool completed) {
     this->title = name;
     this->description = description;
-    this->finish = dateFinish;
+    this->finish = dateFinish.IsValid() ? dateFinish : wxDateTime::Now() + wxTimeSpan::Days(1);
     this->start = wxDateTime::Now();
     this->completed = completed;
     this->id = ++nId;
@@ -21,7 +21,7 @@ Task::Task(int id, const std::string& name, const std::string& description, cons
     this->id = id;
     this->title = name;
     this->description = description;
-    this->finish = dateFinish;
+    this->finish = dateFinish.IsValid() ? dateFinish : wxDateTime::Now() + wxTimeSpan::Days(1);
     this->start = dateStart;
     this->completed = completed;
 
@@ -95,6 +95,10 @@ bool Task::IsOverdue() const {
     return !completed && (finish.IsEarlierThan(wxDateTime::Now()) || finish.IsEqualTo(wxDateTime::Now()));
 }
 // сколько осталось до выполнения задачи
+
 wxTimeSpan Task::TimeRemaining() const {
+    if (!finish.IsValid() || !wxDateTime::Now().IsValid()) {
+        return wxTimeSpan(0); // Возвращаем нулевой интервал при невалидных датах
+    }
     return finish.Subtract(wxDateTime::Now());
 }

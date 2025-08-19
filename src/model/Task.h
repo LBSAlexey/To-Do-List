@@ -10,7 +10,7 @@ class Task {
 public:
     Task(const std::string& name, const std::string& description, const wxDateTime& dateFinish, bool completed = false);
     Task(int id, const std::string& name, const std::string& description, const wxDateTime& dateFinish, const wxDateTime& dateStart, bool completed = false);
-
+    bool isValid() const { return start.IsValid() && finish.IsValid(); };
     // геттеры
     const std::string& getTitle() const;
     const std::string& getDescription() const;

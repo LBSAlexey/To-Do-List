@@ -9,6 +9,9 @@
 #include <string>       // работа со строками
 #include <wx/datetime.h>// работа с датами
 #include <unordered_map>
+#include <wx/log.h>
+#include <wx/file.h>
+#include <wx/filename.h>
 
 
 

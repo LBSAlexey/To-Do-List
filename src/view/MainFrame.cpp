@@ -81,6 +81,7 @@ void MainFrame::OnEditTask(wxCommandEvent& event) {
                 dlg.GetCompletedValue()
             );
             taskPanel->RefreshList();
+            SaveTasksToFile();
         } catch (const std::exception& e) {
             wxMessageBox(e.what(), "error", wxICON_ERROR);
         }
@@ -100,6 +101,7 @@ void MainFrame::OnRemoveTask(wxCommandEvent& event) {
         try {
             controller.removeTask(id);
             taskPanel->RefreshList();
+            SaveTasksToFile();
         } catch (const std::exception& e) {
             wxMessageBox(e.what(), "Error while deleting", wxICON_ERROR);
         }
@@ -107,18 +109,19 @@ void MainFrame::OnRemoveTask(wxCommandEvent& event) {
 }
 
 
-
 void MainFrame::LoadTasksFromFile() {
     wxString defaultDir = wxStandardPaths::Get().GetDocumentsDir();
     wxString defaultFile = defaultDir + wxFILE_SEP_PATH + "tasks.json";
 
     try {
-        controller.loadTaskFromFile(defaultFile.ToStdString());
-        taskPanel->RefreshList();
-        SetStatusText("Задачи успешно загружены из " + defaultFile);
+        if (controller.loadTaskFromFile(defaultFile.ToStdString())) {
+            taskPanel->RefreshList();
+            SetStatusText("Tasks loaded from " + defaultFile);
+        } else {
+            SetStatusText("No tasks found or error loading from " + defaultFile);
+        }
     } catch (const std::exception& e) {
-        // Если файла нет, это нормально - просто начнем с пустого списка
-        SetStatusText("Не удалось загрузить задачи: " + wxString(e.what()));
+        SetStatusText("Error loading tasks: " + wxString(e.what()));
     }
 }
 
@@ -127,10 +130,13 @@ void MainFrame::SaveTasksToFile() {
     wxString defaultFile = defaultDir + wxFILE_SEP_PATH + "tasks.json";
 
     try {
-        controller.saveTaskToFile(defaultFile.ToStdString());
-        SetStatusText("Задачи успешно сохранены в " + defaultFile);
+        if (controller.saveTaskToFile(defaultFile.ToStdString())) {
+            SetStatusText("Tasks saved to " + defaultFile);
+        } else {
+            SetStatusText("Error saving tasks to " + defaultFile);
+        }
     } catch (const std::exception& e) {
-        wxMessageBox("Ошибка при сохранении задач: " + wxString(e.what()),
-                    "Ошибка", wxOK | wxICON_ERROR);
+        wxMessageBox("Error saving tasks: " + wxString(e.what()),
+                    "Error", wxOK | wxICON_ERROR);
     }
 }

@@ -19,9 +19,9 @@ void TaskPanel::InitUI() {
     listCtrl->InsertColumn(0, "ID");
     listCtrl->InsertColumn(1, "Task");
     listCtrl->InsertColumn(2, "Description");
-    listCtrl->InsertColumn(3, "Date", wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE+ 200);
-    listCtrl->InsertColumn(4, "End date");
-    listCtrl->InsertColumn(5, "Days left");
+    listCtrl->InsertColumn(3, "Date", wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE+ 150);
+    listCtrl->InsertColumn(4, "End date", wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE+ 150);
+    listCtrl->InsertColumn(5, "Days left", wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE+ 150);
     listCtrl->InsertColumn(6, "Status");
 
     wxBoxSizer *tasksSizer = new wxBoxSizer(wxVERTICAL);
@@ -33,18 +33,47 @@ void TaskPanel::InitUI() {
 void TaskPanel::Populate() {
     listCtrl->DeleteAllItems();
 
-    for (const auto& [id, task] : controller.getAllTasks()) {
-        int row = listCtrl->GetItemCount();
-        row = listCtrl->InsertItem(row, wxString::Format("%d", id));
-        listCtrl->SetItem(row, 0, wxString::Format("%d", task.getId()));
-        listCtrl->SetItem(row, 1, task.getTitle());
-        listCtrl->SetItem(row, 2, task.getDescription());
-        listCtrl->SetItem(row, 3, task.getDateNow().FormatISOCombined(' '));
-        listCtrl->SetItem(row, 4, task.getDateFinish().FormatISOCombined(' '));
-        listCtrl->SetItem(row, 5, task.TimeRemaining().Format("Day: %D; Time: %H:%M:%S"));
-        listCtrl->SetItem(row, 6, task.getCompleted() ? "Done" : "Not done");
-    }
+    try {
+        for (const auto& [id, task] : controller.getAllTasks()) {
+            // Пропускаем невалидные задачи
+            if (!task.isValid()) {
+                continue;
+            }
 
+            int row = listCtrl->GetItemCount();
+            row = listCtrl->InsertItem(row, wxString::Format("%d", id));
+            listCtrl->SetItem(row, 0, wxString::Format("%d", task.getId()));
+            listCtrl->SetItem(row, 1, task.getTitle());
+            listCtrl->SetItem(row, 2, task.getDescription());
+
+            // Проверяем валидность дат перед форматированием
+            wxString startDate = task.getDateNow().IsValid() ?
+                task.getDateNow().FormatISOCombined(' ') : "Invalid Date";
+            wxString finishDate = task.getDateFinish().IsValid() ?
+                task.getDateFinish().FormatISOCombined(' ') : "Invalid Date";
+
+            listCtrl->SetItem(row, 3, startDate);
+            listCtrl->SetItem(row, 4, finishDate);
+
+            // Форматируем оставшееся время с проверкой
+            wxString timeRemaining;
+            if (task.getDateFinish().IsValid() && wxDateTime::Now().IsValid()) {
+                wxTimeSpan remaining = task.TimeRemaining();
+                if (remaining.IsPositive()) {
+                    timeRemaining = remaining.Format("Day: %D; Time: %H:%M:%S");
+                } else {
+                    timeRemaining = "Overdue";
+                }
+            } else {
+                timeRemaining = "N/A";
+            }
+
+            listCtrl->SetItem(row, 5, timeRemaining);
+            listCtrl->SetItem(row, 6, task.getCompleted() ? "Done" : "Not done");
+        }
+    } catch (const std::exception& e) {
+        wxMessageBox("Error loading tasks: " + wxString(e.what()), "Error", wxOK | wxICON_ERROR);
+    }
 }
 
 

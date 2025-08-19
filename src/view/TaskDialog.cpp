@@ -22,7 +22,7 @@ void TaskDialog::InitUI(Task *task) {
         titleCtrl->SetValue(task->getTitle());
         descCtrl->SetValue(task->getDescription());
         dateCtrl->SetValue(task->getDateFinish());
-        completeCheck->SetValue(!task->getCompleted());
+        completeCheck->SetValue(task->getCompleted());
     }
     // 1. Сетка для меток и полей
     auto* grid = new wxFlexGridSizer(2, 10, 10); // 2 колонки

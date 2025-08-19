@@ -43,31 +43,68 @@ Task* TaskController::getTask(int id) const {
     return this->taskList.getTask(id);
 }
 
-bool TaskController::loadTaskFromFile(const std::string &filePath) const {
+bool TaskController::loadTaskFromFile(const std::string& filePath) const {
     if (filePath.empty()) {
-        throw std::invalid_argument("путь не может быть пустым");
+        wxLogWarning("Empty file path");
+        return false;
     }
+
+    // Проверяем существование файла
+    if (!wxFileExists(filePath)) {
+        wxLogMessage("File does not exist: %s", filePath);
+        return false;
+    }
+
+    // Проверяем, не пустой ли файл
+    wxFile file(filePath);
+    if (file.Length() == 0) {
+        wxLogMessage("File is empty: %s", filePath);
+        return false;
+    }
+    file.Close();
+
     try {
-        taskList.loadFromJson(filePath);
-        return true;
+        return taskList.loadFromJson(filePath);
+    } catch (const std::exception& e) {
+        wxLogError("Error loading tasks: %s", e.what());
+        return false;
     }
-    catch (std::exception &e) {throw std::invalid_argument(e.what());}
 }
 
-bool TaskController::saveTaskToFile(const std::string &filePath) const {
+bool TaskController::saveTaskToFile(const std::string& filePath) const {
     if (filePath.empty()) {
-        throw std::invalid_argument("путь не может быть пустым");
+        wxLogWarning("Empty file path");
+        return false;
     }
+
+    // Создаем директорию, если она не существует
+    wxFileName fn(filePath);
+    if (!fn.DirExists()) {
+        if (!fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL)) {
+            wxLogError("Cannot create directory: %s", fn.GetPath());
+            return false;
+        }
+    }
+
     try {
-        taskList.saveToJson(filePath);
-        return true;
+        return taskList.saveToJson(filePath);
+    } catch (const std::exception& e) {
+        wxLogError("Error saving tasks: %s", e.what());
+        return false;
     }
-    catch (std::exception &e) {throw std::invalid_argument(e.what());}
 }
 
 std::unordered_map<int, Task> TaskController::getAllTasks() const {
-    return !taskList.getTasks().empty() ?  taskList.getTasks() : throw std::invalid_argument("пустой объект");
-
+    try {
+        auto tasks = taskList.getTasks();
+        if (tasks.empty()) {
+            wxLogMessage("Task list is empty");
+        }
+        return tasks;
+    } catch (const std::exception& e) {
+        wxLogError("Error getting tasks: %s", e.what());
+        return std::unordered_map<int, Task>();
+    }
 }
 
 TaskController::~TaskController() = default;
